@@ -19,3 +19,14 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+@layer components{
+  .input-class{
+    @apply rounded-xl py-3 bg-gray-300/50 outline-none hover:border-green-800  px-4 w-full border border-black;
+  }
+  .label-class{
+    @apply text-lg text-gray-800 font-semibold 
+  }
+  .button-class{
+    @apply py-3 rounded-full w-full transition-all duration-300 text-white font-bold text-xl hover:bg-blue-300
+  }
+}
