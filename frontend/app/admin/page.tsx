@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import UserInformationModel from "../components/model/UserInformationModel";
 const Page = () => {
-  const [showProfileModel, setShowProfileModel] = useState<boolean>(false);
+  const [showProfileModel, setShowProfileModel] = useState<boolean>(true);
   return (
     <div className="w-full h-full">
       {showProfileModel && (
