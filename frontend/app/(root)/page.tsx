@@ -1,10 +1,10 @@
 import React from "react";
-import Login from "./components/Login";
+import Login from "../components/Login";
 
 const page = () => {
   return (
     <div>
-      <div className="w-full h-screen overflow-hidden bg-white text-black">
+      <div className="w-full h-screen overflow-hidden text-black">
         <Login />
       </div>
     </div>

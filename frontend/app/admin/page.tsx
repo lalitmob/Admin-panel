@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import UserInformationModel from "../components/model/UserInformationModel";
+import { useAppSelector } from "../lib/hooks";
+import { selectShowProfileModel } from "../lib/features/Model/triggerSlice";
 const Page = () => {
-  const [showProfileModel, setShowProfileModel] = useState<boolean>(true);
+  const showProfileModel = useAppSelector(selectShowProfileModel);
   return (
     <div className="w-full h-full">
       {showProfileModel && (
@@ -11,7 +13,6 @@ const Page = () => {
           <UserInformationModel />
         </div>
       )}
-   
     </div>
   );
 };
