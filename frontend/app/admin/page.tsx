@@ -3,6 +3,7 @@ import React from "react";
 import UserInformationModel from "../components/model/UserInformationModel";
 import { useAppSelector } from "../lib/hooks";
 import { selectShowProfileModel } from "../lib/features/Model/triggerSlice";
+import UserDetails from "../components/UserDetails";
 const Page = () => {
   const showProfileModel = useAppSelector(selectShowProfileModel);
   return (
@@ -13,6 +14,9 @@ const Page = () => {
           <UserInformationModel />
         </div>
       )}
+      <div>
+        <UserDetails/>
+      </div>
     </div>
   );
 };
