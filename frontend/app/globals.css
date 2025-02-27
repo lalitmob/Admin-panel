@@ -21,7 +21,7 @@ body {
 }
 @layer components{
   .input-class{
-    @apply rounded-xl py-3 bg-gray-500/5 outline-none hover:border-green-800  px-4 w-full border border-black;
+    @apply rounded-xl py-3  outline-none hover:border-green-800  px-4 w-full ;
   }
   .label-class{
     @apply text-lg text-gray-800 font-semibold 

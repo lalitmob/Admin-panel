@@ -1,18 +1,32 @@
 "use client";
 import React, { useState } from "react";
-import Link from "next/link";
 import { resetPasswordconst as constData } from "@/app/constants/Auth";
 import Image from "next/image";
 import { Login as logo } from "@/app/constants/Auth.js";
-import { useRouter } from "next/navigation";
+import useAuth from "@/app/api/Auth.api";
+import { useSearchParams } from "next/navigation";
 const ResetPassword = () => {
+  const { resetPass } = useAuth();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const router = useRouter();
-  const onSubmithandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/");
+    setError("");
+
+    if (!token) {
+      setError("Invalid or expired reset link.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    resetPass(password, token);
   };
   return (
     <div className="className='w-full h-screen px-[30%] bg-gray-300/80 py-[8%] text-black'">
@@ -30,7 +44,7 @@ const ResetPassword = () => {
           {constData.Name}
         </h1>
         <form
-          onSubmit={onSubmithandler}
+          onSubmit={handleSubmit}
           className="w-full mt-[5%]  flex gap-5 mb-5  flex-col "
         >
           <label className="label-class text-xl">
@@ -51,6 +65,9 @@ const ResetPassword = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          {error && (
+            <span className="text-red-500 font-semibold text-sm">{error}</span>
+          )}
           <button
             type="submit"
             className="button-class text-black bg-purple-400 rounded-lg"

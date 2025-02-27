@@ -2,31 +2,51 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Login as constdata } from "@/app/constants/Auth.js";
-import validation from "@/app/validation/auth_val.js";
 import Link from "next/link";
+import useAuth from "../api/Auth.api";
 interface ErrorState {
   email?: string;
   password?: string;
 }
 const Login = () => {
   const [error, setError] = useState<ErrorState>({});
+  const { login } = useAuth();
   const [data, setData] = useState({
     email: "",
     password: "",
   });
+  const errorhandler = () => {
+    const newError: ErrorState = {};
+    const Eregex = /^[a-zA-Z0-9_.+\-]+[\x40][a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+    if (!data.email.trim()) {
+      newError.email = "Email field is empty";
+    } else if (!Eregex.test(data.email)) {
+      newError.email = "Invalid email address";
+    }
+    if (!data.password.trim()) {
+      newError.password = "Password field is required";
+    }
+      setError(newError);
+      return Object.keys(newError).length === 0
+    
+  };
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const onChangehandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
     setError((prev) => {
-      const { [name]: removedError, ...restErrors } = prev; 
-
-      return restErrors;
+      const updatedErrors = { ...prev };
+      delete updatedErrors[name as keyof ErrorState];
+      return updatedErrors;    
     });
   };
   const handleformSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    validation.login(data, setError);
     e.preventDefault();
+    const errorValidation=errorhandler();
+    if (errorValidation) {
+      login(data);
+    }
   };
 
   return (

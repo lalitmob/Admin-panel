@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import triggerReducer from "./features/Model/triggerSlice"
+import triggerReducer from "./features/Model/triggerSlice";
+import userReducer from "./features/Model/user.slice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
-        trigger : triggerReducer
+      trigger: triggerReducer,
+      user: userReducer,
     },
   });
 };

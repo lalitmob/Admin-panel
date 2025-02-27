@@ -11,11 +11,11 @@ const Navbar = () => {
   const dispatch = useAppDispatch();
   const select  = useAppSelector(selectShowProfileModel)
   const handleProfile = () => {
-    dispatch(toggleProfileModel());
+    dispatch(toggleProfileModel(true));
   };
   return (
     <nav className="px-5 py-3 relative flex h-[80px] text-black items-center rounded-b-xl bg-white">
-      <div className="flex items-center gap-5">
+      <div className="flex relative items-center gap-5">
         <div className="relative w-[50px] h-[50px] overflow-hidden rounded-full border border-black">
           <Image
             src={navconst.pic}
@@ -24,8 +24,8 @@ const Navbar = () => {
             className="object-cover"
           />
         </div>
-        <p>{navconst.name}</p>
-        <i className={`${select?"fa-solid fa-angle-down " : "fa-solid fa-angle-up " }absolute z-30 left-[10%]`} onClick={handleProfile}></i>
+        <p className="mr-10">{navconst.name}</p>
+        <i className={`${select?"fa-solid fa-angle-down " : "fa-solid fa-angle-up " }absolute z-30  right-0`} onClick={handleProfile}></i>
       </div>
     </nav>
   );
