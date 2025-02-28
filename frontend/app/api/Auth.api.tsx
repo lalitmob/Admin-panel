@@ -25,6 +25,11 @@ const useAuth = () => {
       }
     } catch (err) {
       if (err instanceof AxiosError) {
+        if (err.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          router.push("/");
+        }
         setError(err.response?.data?.message || "Login failed");
       } else {
         setError("An unexpected error occurred");

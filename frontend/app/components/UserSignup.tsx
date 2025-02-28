@@ -3,7 +3,9 @@ import React, { ChangeEvent, FormEvent, useState, KeyboardEvent } from "react";
 import { userDetailsUiConst as constData } from "@/app/constants/userDetails.js";
 import { Country, State, City } from "country-state-city";
 import useAuth from "../api/Auth.api";
-
+import useRoles from "../api/rolesApi";
+import { useEffect } from "react";
+import NewRoleModel from "./model/NewRole.model";
 const UserDetails = () => {
   const [data, setData] = useState({
     firstName: "",
@@ -14,13 +16,17 @@ const UserDetails = () => {
     designation: "",
     state: "",
     city: "",
+    countryCode: "",
     country: "",
     zipCode: "",
+    branch: "",
   });
-  const [error, setError] = useState< {[key : string] : [string]}>({});
+  const [newRoleInput, setNewRoleInput] = useState(false);
+  const [error, setError] = useState<{ [key: string]: [string] }>({});
   const { register } = useAuth();
+  const { fetchTypes } = useRoles();
   const handleError = () => {
-    const newError: { [key: string]: string } = {}; 
+    const newError: { [key: string]: string } = {};
     if (!data.firstName.trim()) {
       newError.firstName = "First name is required";
     }
@@ -41,10 +47,6 @@ const UserDetails = () => {
       newError.phoneNumber = "Phone number is required";
     } else if (!phoneRegex.test(data.phoneNumber)) {
       newError.phoneNumber = "Invalid phone number format";
-    }
-
-    if (data.roles.length === 0) {
-      newError.roles = "At least one role must be selected";
     }
 
     if (!data.designation.trim()) {
@@ -73,8 +75,14 @@ const UserDetails = () => {
     setError(newError);
     return Object.keys(newError).length === 0;
   };
-
-  const [roleInput, setRoleInput] = useState("");
+  const [branch, setBranch] = useState([]);
+  const [roles, setRoles] = useState([]);
+  useEffect(() => {
+    fetchTypes("branch", setBranch);
+    fetchTypes("role", setRoles);
+  }, []);
+  console.log("branch", branch);
+  console.log("role", roles);
 
   const onSubmithandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -82,7 +90,8 @@ const UserDetails = () => {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
-      phoneNumber: `+${data.country}${data.phoneNumber}`,
+      countryCode: String(data.countryCode),
+      phoneNumber: Number(data.phoneNumber),
       designation: data.designation,
       address: {
         state: data.state,
@@ -90,6 +99,7 @@ const UserDetails = () => {
         country: data.country,
         zipCode: String(data.zipCode),
       },
+      branch: data.branch,
       roles: data.roles,
     };
     handleError();
@@ -120,23 +130,6 @@ const UserDetails = () => {
     });
   };
 
-  const onRoleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRoleInput(e.target.value);
-  };
-
-  const onRoleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      if (roleInput.trim() && !data.roles.includes(roleInput.trim())) {
-        setData((prev) => ({
-          ...prev,
-          roles: [...prev.roles, roleInput.trim()],
-        }));
-      }
-      setRoleInput("");
-    }
-  };
-
   const removeRole = (roleToRemove: string) => {
     setData((prev) => ({
       ...prev,
@@ -145,7 +138,7 @@ const UserDetails = () => {
   };
 
   return (
-    <div className="px-5 py-6 rounded-3xl shadow-sm shadow-black bg-white">
+    <div className="px-5 py-6 w-full relative rounded-3xl shadow-sm shadow-black bg-white">
       <form onSubmit={onSubmithandler} className="text-black">
         <h1 className="text-2xl font-semibold mb-5">New employee form</h1>
         <div className="grid grid-cols-2 gap-4">
@@ -153,14 +146,38 @@ const UserDetails = () => {
             <div key={key} className="flex flex-col relative">
               {field.label === "Role" ? (
                 <div>
-                  <input
-                    type="text"
-                    value={roleInput}
-                    onChange={onRoleInputChange}
-                    onKeyDown={onRoleKeyDown}
-                    placeholder="Type role and press Enter"
-                    className="input-class peer border shadow-sm shadow-white"
-                  />
+                  <select
+                    name="roles"
+                    className="input-class  bg-white border shadow-sm shadow-white py-4"
+                    onChange={(e) => {
+                      const selectedRole = e.target.value;
+                      if (selectedRole && !data.roles.includes(selectedRole)) {
+                        setData((prev) => ({
+                          ...prev,
+                          roles: [...prev.roles, selectedRole],
+                        }));
+                      }
+                    }}
+                  >
+                    <option value="">Select Role</option>
+                    {roles.map((role) => (
+                      <option key={role._id} value={role.name}>
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setNewRoleInput(true)}
+                    className=" bg-blue-400 px-5 py-2 rounded-lg my-3"
+                  >
+                    New role
+                  </button>
+                  {newRoleInput && (
+                    <div className="absolute m-auto z-20 top-0 left-0 w-full h-full">
+                      <NewRoleModel onClose={setNewRoleInput} />
+                    </div>
+                  )}
                   <div className="flex gap-2 mt-2 flex-wrap">
                     {data.roles.map((role, index) => (
                       <span
@@ -172,7 +189,6 @@ const UserDetails = () => {
                       </span>
                     ))}
                   </div>
-                 
                 </div>
               ) : field.input === "select" ? null : (
                 <input
@@ -199,12 +215,11 @@ const UserDetails = () => {
           <div className="flex flex-col relative w-full">
             <div className="relative flex items-center">
               <select
-                name="country"
-                value={data.country}
+                name="countryCode"
+                value={data.countryCode}
                 onChange={onChangehandler}
                 className="absolute left-2 top-1/2 transform -translate-y-1/2 w-20 rounded-xl  bg-transparent  text-sm px-2 h-[35px] outline-none cursor-pointer"
               >
-                <option value="">+91</option>
                 {Country.getAllCountries().map((country, idx) => (
                   <option key={idx} value={country.phonecode}>
                     +{country.phonecode}
@@ -220,17 +235,36 @@ const UserDetails = () => {
                 placeholder="Enter phone number"
               />
             </div>
-              {error?.phoneNumber && (
-                <div className="text-red-500 text-sm font-semibold  items-center gap-1">
-                  <span className=" text-sm">
-                    <i className="fa-solid fa-circle-exclamation" />
-                  </span>
-                  {error.phoneNumber}
-                </div>
-              )}
-            
+            {error?.phoneNumber && (
+              <div className="text-red-500 text-sm font-semibold  items-center gap-1">
+                <span className=" text-sm">
+                  <i className="fa-solid fa-circle-exclamation" />
+                </span>
+                {error.phoneNumber}
+              </div>
+            )}
+
             <label className="absolute left-3 -top-3 bg-white transition-all text-gray-600 text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-800 peer-focus:top-1 peer-focus:text-sm peer-focus:text-blue-600">
               Phone
+            </label>
+          </div>
+          <div className="flex flex-col relative">
+            <select
+              name="branch"
+              value={data.branch}
+              onChange={onChangehandler}
+              className="input-class py-4 bg-white border"
+            >
+              <option value="">Select Country</option>
+              {branch.map((values, index) => (
+                <option key={index} value={values}>
+                  {values}
+                </option>
+              ))}
+            </select>
+
+            <label className="absolute left-3 -top-3 bg-white transition-all text-gray-600 text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-800 peer-focus:top-1 peer-focus:text-sm peer-focus:text-blue-600">
+              Branch
             </label>
           </div>
         </div>
@@ -250,11 +284,10 @@ const UserDetails = () => {
                 </option>
               ))}
             </select>
-            
+
             <label className="absolute left-3 -top-3 bg-white transition-all text-gray-600 text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-800 peer-focus:top-1 peer-focus:text-sm peer-focus:text-blue-600">
               Country
             </label>
-            
           </div>
 
           <div className="flex flex-col relative">
@@ -310,7 +343,7 @@ const UserDetails = () => {
           </div>
           <button
             type="submit"
-            className="text-black button-class bg-green-300 w-[150px] mt-5"
+            className="text-white button-class rounded-lg  bg-blue-500  w-[150px] mt-5"
           >
             Submit
           </button>

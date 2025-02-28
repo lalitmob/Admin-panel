@@ -14,7 +14,7 @@ const Sidebar = () => {
     router.replace(`/admin/${path}`);
   };
   return (
-    <div className="h-full w-full flex flex-col text-black justify-between  ">
+    <div className="h-full w-full flex flex-col text-black hover:cursor-pointer justify-between  ">
       <div className="bg-white flex  rounded-xl gap-5 px-3 py-4">
         <div className="flex flex-col gap-6 ">
           {options.icons.map((data, index) => (
