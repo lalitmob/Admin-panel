@@ -7,12 +7,18 @@ import {
   selectShowProfileModel,
   toggleProfileModel,
 } from "../lib/features/Model/triggerSlice";
+import { userInfoSlice, userTokenSlice } from "../lib/features/Model/user.slice";
+
 const Navbar = () => {
   const dispatch = useAppDispatch();
-  const select  = useAppSelector(selectShowProfileModel)
+  const data = useAppSelector(userInfoSlice);
+  const token = useAppSelector(userTokenSlice)
+  const select = useAppSelector(selectShowProfileModel);
   const handleProfile = () => {
     dispatch(toggleProfileModel(true));
   };
+  console.log(token)
+  console.log(data)
   return (
     <nav className="px-5 py-3 relative flex h-[80px] text-black items-center rounded-b-xl bg-white">
       <div className="flex relative items-center gap-5">
@@ -24,8 +30,13 @@ const Navbar = () => {
             className="object-cover"
           />
         </div>
-        <p className="mr-10">{navconst.name}</p>
-        <i className={`${select?"fa-solid fa-angle-down " : "fa-solid fa-angle-up " }absolute z-30  right-0`} onClick={handleProfile}></i>
+        <p className="mr-10">{data?.userName?.firstName}</p>
+        <i
+          className={`${
+            select ? "fa-solid fa-angle-down " : "fa-solid fa-angle-up "
+          }absolute z-30  right-0`}
+          onClick={handleProfile}
+        ></i>
       </div>
     </nav>
   );

@@ -1,20 +1,38 @@
 "use client";
-import DetailsPage from "@/app/components/DetailsPage";
 import React, { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import useUser from "@/app/api/user.api";
+interface UserData {
+  _id: string;
+  userName: {
+    firstName: string;
+    lastName: string;
+  };
+  email: string;
+  phoneNumber:
+    | {
+        countryCode: string;
+        number: string;
+      }
+    | string;
+  designation: string;
+  address: {
+    country: string;
+    state: string;
+    city: string;
+    zipCode: string;
+  };
+}
 
 const Details = () => {
   const param = useParams();
-  console.log("param", param);
-  const [fetchedData, setFetchedData] = useState([]);
+  const [fetchedData, setFetchedData] = useState<UserData[]>([]);
   const { callUserById } = useUser();
   useEffect(() => {
     callUserById(setFetchedData, param);
   }, []);
-  console.log(fetchedData);
   return (
     <div className="px-5 py-6 rounded-3xl shadow-sm shadow-black bg-white">
       <div className="flex gap-3">
@@ -60,7 +78,6 @@ const Details = () => {
                 </div>
               </div>
 
-              {/* Address Section */}
               <h2 className="font-bold">Address</h2>
               <div className="flex flex-col gap-5">
                 <div className="flex gap-5">

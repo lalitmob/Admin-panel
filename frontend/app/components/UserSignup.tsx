@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, FormEvent, useState, KeyboardEvent } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { userDetailsUiConst as constData } from "@/app/constants/userDetails.js";
 import { Country, State, City } from "country-state-city";
 import useAuth from "../api/Auth.api";

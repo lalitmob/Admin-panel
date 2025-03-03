@@ -3,6 +3,8 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../lib/hooks";
 import { userToken, userInformation } from "../lib/features/Model/user.slice";
+import { persistor } from "../lib/store";
+
 const URL = "http://localhost:5000";
 
 const useAuth = () => {
@@ -21,7 +23,7 @@ const useAuth = () => {
         },
       });
       if (response.status === 201) {
-        alert("User successfully added");
+        toast.done("User successfully added");
       }
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -47,16 +49,16 @@ const useAuth = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.data.token);
-        const user = JSON.stringify(response.data.data.user);
-        localStorage.setItem("user", user);
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
         router.push("/admin");
-        dispatch(userToken(response.data.token.token));
-        dispatch(userInformation(user));
+
+        dispatch(userToken(response.data.data.token));
+        dispatch(userInformation(response.data.data.user));
       }
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         if (err.status === 404) {
-          alert("Invalid credentials. Please try again.");
+          toast.error("Invalid credentials. Please try again.");
         }
         setError(err.response?.data?.message || "Login failed");
       } else {
@@ -125,6 +127,7 @@ const useAuth = () => {
       if (response.status === 200) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        persistor.purge();
         router.push("/");
       }
     } catch (err: unknown) {
@@ -132,6 +135,7 @@ const useAuth = () => {
         if (err.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
+
           router.push("/");
         }
         setError(err.response?.data?.message || "Login failed");
