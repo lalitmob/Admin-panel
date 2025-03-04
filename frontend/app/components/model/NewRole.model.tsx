@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import useRoles from "@/app/api/rolesApi";
 
-const NewRoleModel = ({ onClose }: { onClose: () => boolean }) => {
+const NewRoleModel = ({ onClose }: { onClose: (data : boolean) => boolean }) => {
   const [roleInput, setRoleInput] = useState("");
   const [permissions, setPermissions] = useState<
     { resource: string; actions: string[] }[]
