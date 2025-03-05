@@ -30,7 +30,7 @@ interface Manager {
 
 interface ProjectManagersProps {
   managers: Manager[];
-  handleClick: (role: string, managerId: string | null) => void;
+  handleClick: (role?: string, managerId?: string) => void;
 }
 
 const ProjectManagers: React.FC<ProjectManagersProps> = ({ handleClick, managers }) => {

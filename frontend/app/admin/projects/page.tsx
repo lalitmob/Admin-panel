@@ -6,6 +6,7 @@ const Projectpage = () => {
   return (
     <div>
         <Projects/>
+        
     </div>
   )
 }

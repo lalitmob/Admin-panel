@@ -7,6 +7,7 @@ const useProject = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userAuthToken = localStorage.getItem("token");
+  
   const projectCreate = async (payload: object) => {
     setLoading(true);
     setError(null);
@@ -35,7 +36,8 @@ const useProject = () => {
       setLoading(false);
     }
   };
-  const requestQuot = async (projectToken: string, setData) => {
+  
+  const requestQuot = async (projectToken: string, setData : (data : unknown)=>void) => {
     console.log("project token", projectToken);
     try {
       const response = await axios.get(
@@ -54,15 +56,19 @@ const useProject = () => {
       setLoading(false);
     }
   };
-  const confirmProjectsApi = async (data) => {
+  const confirmProjectsApi = async (data : object) => {
     try {
       console.log(data)
       const response = await axios.patch(`${URL}/projects/confirmProject`, data);
       if (response.status === 200) {
         alert("Submitted successfully");
+        router.replace("/redirect/Thankyou")
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
+        if(error.status === 401){
+         router.push("redirect/Expired") 
+        }
         setError(error?.response?.data?.message || "Project creation failed");
       } else {
         setError("An unexpected error occured");

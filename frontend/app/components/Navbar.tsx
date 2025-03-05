@@ -1,44 +1,90 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { navconst } from "@/app/constants/navcont.js";
 import { useAppDispatch, useAppSelector } from "../lib/hooks";
-import {
-  selectShowProfileModel,
-  toggleProfileModel,
-} from "../lib/features/Model/triggerSlice";
-import { userInfoSlice, userTokenSlice } from "../lib/features/Model/user.slice";
+import { toggleProfileModel } from "../lib/features/Model/triggerSlice";
+import { userInfoSlice } from "../lib/features/Model/user.slice";
+import NotificationBell from "./NotificationBell";
 
-const Navbar = () => {
+interface NavbarProps {
+  setSidebarOpen: (open: boolean) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ setSidebarOpen }) => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(userInfoSlice);
-  const token = useAppSelector(userTokenSlice)
-  const select = useAppSelector(selectShowProfileModel);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const user = localStorage.getItem("user");
+      if (user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          setUserId(parsedUser?.id || null);
+        } catch (error) {
+          console.error("Error parsing user data:", error);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [isSidebarOpen]);
+
   const handleProfile = () => {
     dispatch(toggleProfileModel(true));
+    setSidebarOpen(false);
   };
-  console.log(token)
-  console.log(data)
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <nav className="px-5 py-3 relative flex h-[80px] text-black items-center rounded-b-xl bg-white">
-      <div className="flex relative items-center gap-5">
-        <div className="relative w-[50px] h-[50px] overflow-hidden rounded-full border border-black">
-          <Image
-            src={navconst.pic}
-            alt="profile pic"
-            fill
-            className="object-cover"
-          />
+    <>
+      <nav className="px-5 py-3 relative flex h-[80px] text-black items-center rounded-b-xl bg-white justify-between">
+        <div className="flex items-center gap-5">
+          <button
+            onClick={toggleSidebar}
+            className="block md:hidden text-2xl focus:outline-none"
+          >
+            <i
+              className={`fa-solid ${isSidebarOpen ? "fa-times" : "fa-bars"}`}
+            />
+          </button>
+          <div
+            onClick={handleProfile}
+            className="relative w-[50px] h-[50px] overflow-hidden rounded-full border border-black"
+          >
+            <Image
+              src={navconst.pic}
+              alt="profile pic"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <p className="hidden md:block">{data?.userName?.firstName}</p>
         </div>
-        <p className="mr-10">{data?.userName?.firstName}</p>
-        <i
-          className={`${
-            select ? "fa-solid fa-angle-down " : "fa-solid fa-angle-up "
-          }absolute z-30  right-0`}
-          onClick={handleProfile}
-        ></i>
-      </div>
-    </nav>
+        <NotificationBell userId={userId} />
+      </nav>
+
+      {isSidebarOpen && (
+        <div
+          className="relative top-0 left-0 w-full h-full bg-black/50 z-40"
+          onClick={toggleSidebar}
+        />
+      )}
+    </>
   );
 };
 
