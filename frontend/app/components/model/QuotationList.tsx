@@ -37,8 +37,7 @@ const QuotationList: React.FC<QuotationListProps> = ({
 
   const handleSelectBreakdown = (breakdown: Quotation) => {
     setSelectedBreakdown(breakdown);
-    console.log(breakdown)
-    handleClick("chosenQuotation", breakdown);
+   handleClick("chosenQuotation", breakdown);
   };
 
   return (

@@ -48,6 +48,9 @@ const useProject = () => {
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
+        if(error.status === 401){
+          router.push("/redirect/Expired") 
+        }
         setError(error?.response?.data?.message || "Project creation failed");
       } else {
         setError("An unexpected error occured");
@@ -62,7 +65,7 @@ const useProject = () => {
       const response = await axios.patch(`${URL}/projects/confirmProject`, data);
       if (response.status === 200) {
         alert("Submitted successfully");
-        router.replace("/redirect/Thankyou")
+        // router.replace("/redirect/Thankyou")
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

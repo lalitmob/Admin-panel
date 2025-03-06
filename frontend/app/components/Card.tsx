@@ -53,6 +53,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ token, data }) => {
 
   const { confirmProjectsApi } = useProject();
 
+  
   if (!data || !data.project || !data.projectQuota) return <p>Loading...</p>;
 
   const handleClick = (roleOrField: string, value: string | ProjectQuota) => {
