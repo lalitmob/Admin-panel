@@ -17,7 +17,7 @@ type Notification = {
     description: string;
     clientEmail: string;
     proposedDuration: number;
-    quotation: Record<string, number>; 
+    quotation: Record<string, number>;
     techStack: string[];
     type: string;
   };
@@ -27,6 +27,7 @@ const NotificationBell = ({ userId }: { userId: string | null }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isShaking, setIsShaking] = useState(false);
   const [open, setOpen] = useState(false);
+  const [notificationModel, setNotificationModel] = useState(false);
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);
 
@@ -57,7 +58,7 @@ const NotificationBell = ({ userId }: { userId: string | null }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" onClick={()=>setNotificationModel(!notificationModel)}>
       <motion.div
         animate={isShaking ? { rotate: [-10, 10, -10, 10, 0] } : {}}
         transition={{
@@ -78,11 +79,12 @@ const NotificationBell = ({ userId }: { userId: string | null }) => {
         </span>
       )}
 
-      <NotificationList
-        notifications={notifications}
-        onNotificationClick={handleNotificationClick}
-      />
-
+      {notificationModel&&
+        <NotificationList
+          notifications={notifications}
+          onNotificationClick={handleNotificationClick}
+        />
+      }
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogTitle>Notification Details</DialogTitle>
@@ -113,13 +115,13 @@ const NotificationBell = ({ userId }: { userId: string | null }) => {
                   <label className="font-semibold">Employees:</label>
                   <div className="ml-2">
                     {selectedNotification.message.quotation ? (
-                      Object.entries(selectedNotification.message.quotation).map(
-                        ([role, count], index) => (
-                          <p key={index} className="text-gray-600">
-                            {role}: {count}
-                          </p>
-                        )
-                      )
+                      Object.entries(
+                        selectedNotification.message.quotation
+                      ).map(([role, count], index) => (
+                        <p key={index} className="text-gray-600">
+                          {role}: {count}
+                        </p>
+                      ))
                     ) : (
                       <p className="text-gray-500">No employees listed.</p>
                     )}

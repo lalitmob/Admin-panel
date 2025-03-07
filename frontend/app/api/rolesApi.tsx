@@ -1,9 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
 const URL = "http://localhost:5000";
 const useRoles = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userAuthToken = localStorage.getItem("token");
@@ -21,11 +19,7 @@ const useRoles = () => {
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
-        if (error.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          router.push("/");
-        }
+    
         setError(error?.response?.data?.message || "Login failed");
       } else {
         setError("An unexpected error occured");
@@ -52,11 +46,7 @@ const useRoles = () => {
       }
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
-        if (error.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          router.push("/");
-        }
+       
         setError(error?.response?.data?.message || "Login failed");
       } else {
         setError("An unexpected error occured");

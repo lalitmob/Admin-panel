@@ -1,13 +1,13 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // Uses localStorage
+import storage from "@/utils/storage"; 
 import triggerReducer from "./features/Model/triggerSlice";
 import userReducer from "./features/Model/user.slice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "trigger"], // ✅ Only persist selected reducers
+  whitelist: ["user", "trigger"],
   version: 1, 
 };
 
@@ -18,18 +18,15 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const makeStore = () =>
-  configureStore({
-    reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        serializableCheck: false, // ✅ Prevents JSON double-stringification
-      }),
-  });
+export const store = configureStore({
+  reducer: persistedReducer, 
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
 
-export const store = makeStore();
 export const persistor = persistStore(store);
 
-export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

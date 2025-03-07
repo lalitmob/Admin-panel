@@ -13,10 +13,9 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ setSidebarOpen }) => {
   const dispatch = useAppDispatch();
-  const data = useAppSelector(userInfoSlice);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-
+  const data = useAppSelector(userInfoSlice);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const user = localStorage.getItem("user");

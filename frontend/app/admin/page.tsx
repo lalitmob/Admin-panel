@@ -9,6 +9,8 @@ import Vacation from "../components/Vacation";
 import CorporateCv from "../components/CorporateCv";
 import PerformanceReview from "../components/PerformanceReview";
 import DetailsPage from "../components/DetailsPage";
+import { persistor } from "@/app/lib/store";
+console.log("Persistor state:", persistor.getState());
 const Admin = () => {
   const selectOption = useAppSelector(selectUserOption);
   return (

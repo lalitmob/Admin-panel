@@ -1,15 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer components{
-  .input-class{
-    @apply rounded-xl py-3  outline-none hover:border-green-800  px-4 w-full ;
+@layer components {
+  .input-class {
+    @apply rounded-xl py-3  outline-none hover:border-green-800  px-4 w-full;
   }
-  .label-class{
-    @apply text-lg text-gray-800 font-semibold 
+  .label-class {
+    @apply text-lg text-gray-800 font-semibold;
   }
-  .button-class{
-    @apply py-3 rounded-full w-full transition-all duration-300 text-white font-bold text-xl hover:bg-blue-300
+  .button-class {
+    @apply py-3 rounded-full w-full transition-all duration-300 text-white font-bold text-xl hover:bg-blue-300;
+  }
+  .custom-calendar {
+    @apply bg-white p-5 rounded-lg shadow-md;
+  }
+
+  .custom-calendar .fc-col-header-cell {
+    @apply bg-blue-600 text-white font-bold p-3;
+  }
+
+  .custom-calendar .fc-day {
+    @apply border border-gray-300 transition-all duration-200;
+  }
+
+  .custom-calendar .fc-day:hover {
+    @apply bg-gray-200 cursor-pointer;
+  }
+
+  .custom-calendar .fc-event {
+    @apply bg-green-500 text-white px-2 py-1 rounded-md;
   }
 }
 
@@ -39,7 +58,8 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem}
+    --radius: 0.5rem;
+  }
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -64,7 +84,8 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%}
+    --chart-5: 340 75% 55%;
+  }
 }
 
 @layer base {

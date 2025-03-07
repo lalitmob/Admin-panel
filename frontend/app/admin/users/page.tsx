@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect, useMemo } from "react";
 import ColumnGroupingTable from "@/app/components/Users";
 import UserDetails from "@/app/components/UserSignup";
